@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Socket.io Client</title>
+    <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.js'></script>
+    <script type='text/javascript'>
+        var socket = io('http://localhost:3000', {path: '/socket.io'}); // connect to server
+        var ID = Date.now();
+
+        socket.on('fromServer', function(data) { // listen for fromServer message
+            console.log('Connected to Server on Port ' + data.id);
+            socket.emit('fromClient', {id: ID}); // send fromClient message to server
+        });
+
+        socket.on('Handshake', function() { // listen for fromServer message
+            setTimeout(function() {
+                socket.emit('hello', {id: ID, msg: 'Hello'})
+            }, 2500);
+        });
+        socket.on('hi', function(data) { // listen for fromServer message
+            console.log('Server: ' + data.msg);
+            setTimeout(function() {
+                socket.emit('hru', {id: ID, msg: 'How are you?'})
+            }, 2500);
+        });
+        socket.on('great', function(data) { // listen for fromServer message
+            console.log('Server: ' + data.msg);
+            setTimeout(function() {
+                socket.emit('Handshake')
+            }, 2500);
+        });
+
+
+        socket.on('disconnect', function() {
+            console.log('Server disconnected');
+        });
+    </script>
+</head>
+<body>
+    <div class="client">
+        <h2>Socket.io Client</h2>
+    </div>
+
+</body>
+</html>
